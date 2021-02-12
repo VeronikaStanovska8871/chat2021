@@ -89,6 +89,37 @@ public class Database {
             return null;
         }
         }
+        public boolean sendMessage (int from, String toUser, String text){
+        if (text == null || text.equals("")){
+            return false;
+        }
+        int to = getUserId(toUser);
+        if (to == -1)
+            return false;
+        try{
+            Connection con = getConnection();
+            if (con == null){
+                System.out.println("Connection issue");
+                return false;
+            }
+            PreparedStatement ps=con.prepareStatement(newMessage);
+            ps.setInt(1,from);
+            ps.setInt(2,to);
+            ps.setString(3, text);
+            int result = ps.executeUpdate();
+            con.close();
+            if (result<1){
+                System.out.println("Message not delivered");
+                return false;
+            }else {
+                System.out.println("Message sent");
+                return true;
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 }
 
